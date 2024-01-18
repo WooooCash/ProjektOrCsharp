@@ -3,48 +3,60 @@ using Auios.QuadTree;
 
 namespace Voxel;
 
-public class ObjectBound : IQuadTreeObjectBounds<Face>
+public class FaceWithMeshIdx
 {
-    private readonly List<Vector3D> _vertices;
+    public Face face;
+    public int meshIdx;
 
-    public ObjectBound(List<Vector3D> vertices)
+    public FaceWithMeshIdx(Face _face, int _meshIdx)
     {
-        _vertices = vertices;
+        face = _face;
+        meshIdx = _meshIdx;
+    }
+}
+
+public class ObjectBound : IQuadTreeObjectBounds<FaceWithMeshIdx>
+{
+    private readonly List<Mesh> _meshes;
+
+    public ObjectBound(List<Mesh> meshes)
+    {
+        _meshes = meshes;
     }
     
-    public float GetLeft(Face obj)
+    public float GetLeft(FaceWithMeshIdx obj)
     {
-        var x0 = _vertices[obj.Indices[0]].X;
-        var x1 = _vertices[obj.Indices[1]].X;
-        var x2 = _vertices[obj.Indices[2]].X;
+        var x0 = _meshes[obj.meshIdx].Vertices[obj.face.Indices[0]].X;
+        var x1 = _meshes[obj.meshIdx].Vertices[obj.face.Indices[1]].X;
+        var x2 = _meshes[obj.meshIdx].Vertices[obj.face.Indices[2]].X;
         
         return Math.Min(x0, Math.Min(x1, x2));
     }
 
-    public float GetRight(Face obj)
+    public float GetRight(FaceWithMeshIdx obj)
     {
-        var x0 = _vertices[obj.Indices[0]].X;
-        var x1 = _vertices[obj.Indices[1]].X;
-        var x2 = _vertices[obj.Indices[2]].X;
+        var x0 = _meshes[obj.meshIdx].Vertices[obj.face.Indices[0]].X;
+        var x1 = _meshes[obj.meshIdx].Vertices[obj.face.Indices[1]].X;
+        var x2 = _meshes[obj.meshIdx].Vertices[obj.face.Indices[2]].X;
         
         return Math.Max(x0, Math.Max(x1, x2));
     }
 
-    public float GetTop(Face obj)
+    public float GetTop(FaceWithMeshIdx obj)
     {
-        var y0 = _vertices[obj.Indices[0]].Y;
-        var y1 = _vertices[obj.Indices[1]].Y;
-        var y2 = _vertices[obj.Indices[2]].Y;
-        
-        return Math.Max(y0, Math.Max(y1, y2));
-    }
-
-    public float GetBottom(Face obj)
-    {
-        var y0 = _vertices[obj.Indices[0]].Y;
-        var y1 = _vertices[obj.Indices[1]].Y;
-        var y2 = _vertices[obj.Indices[2]].Y;
+        var y0 = _meshes[obj.meshIdx].Vertices[obj.face.Indices[0]].Y;
+        var y1 = _meshes[obj.meshIdx].Vertices[obj.face.Indices[1]].Y;
+        var y2 = _meshes[obj.meshIdx].Vertices[obj.face.Indices[2]].Y;
         
         return Math.Min(y0, Math.Min(y1, y2));
+    }
+
+    public float GetBottom(FaceWithMeshIdx obj)
+    {
+        var y0 = _meshes[obj.meshIdx].Vertices[obj.face.Indices[0]].Y;
+        var y1 = _meshes[obj.meshIdx].Vertices[obj.face.Indices[1]].Y;
+        var y2 = _meshes[obj.meshIdx].Vertices[obj.face.Indices[2]].Y;
+        
+        return Math.Max(y0, Math.Max(y1, y2));
     }
 }
